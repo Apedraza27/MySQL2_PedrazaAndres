@@ -614,81 +614,7 @@ INSERT INTO alquileres VALUES
 
 -- ### FUNCIONES ### --
 
-## registrar un cliente
-delimiter //
-create procedure registrar_cliente(cliente_id int, cliente_nombre1 varchar(25), cliente_nombre2 varchar(25), cliente_apellido1 varchar(25), cliente_apellido2 varchar(25), cliente_email varchar(50), cliente_cedula varchar(25), cliente_celular varchar(25), cliente_ciudad_residencia varchar(25), cliente_direccion varchar(25))
-begin
-	insert into cliente(id, nombre1, nombre2, apellido1, apellido2, email, cedula, celular, ciudad_residencia, direccion)
-    values (cliente_id, cliente_nombre1, cliente_nombre2, cliente_apellido1, cliente_apellido2, cliente_email, cliente_cedula, cliente_celular, cliente_ciudad_residencia, cliente_direccion);
-end//
-
-delimiter ;
-CALL registrar_cliente('101', 'Alberto', 'Nicol', 'instantaneo', 'Apesta', 'AlbertEinstein@gmail.com', '1234567890', '123-123-123', 'Bucaramanga', 'Rincon de Giron 100#123-123');
-
-## actualizar un cliente dado su id
-delimiter //
-create procedure actualizar_cliente(id_cliente int, n_id_cliente int, n_cliente_nombre1 varchar(25), n_cliente_nombre2 varchar(25), n_cliente_apellido1 varchar(25), n_cliente_apellido2 varchar(25), n_cliente_email varchar(50), n_cliente_cedula varchar(25), n_cliente_celular varchar(25), n_cliente_ciudad_residencia varchar(25), n_cliente_direccion varchar(25))
-begin
-	update cliente set id = n_id_cliente, nombre1 = n_cliente_nombre1, nombre2 = n_cliente_nombre2, apellido1 = n_cliente_apellido1, apellido2 = n_cliente_apellido2, email = n_cliente_email, cedula = n_cliente_cedula, celular = n_cliente_celular, ciudad_residencia = n_cliente_ciudad_residencia, direccion = n_cliente_direccion
-    where id = id_cliente;
-end//
-delimiter ;
-call actualizar_cliente(12345, 102, 'Juancho','Felipe','Casillas','Vida','JuanchoVida@gmail.com','6333333-3', '633-33-33', 'Piedecuesta', 'barrio 232#232-232');
-
-## registrar empleados
-delimiter //
-create procedure registrar_empleado(empleado_id int, empleado_nombre1 varchar(25), empleado_nombre2 varchar(25), empleado_apellido1 varchar(25), empleado_apellido2 varchar(25), empleado_email varchar(25), empleado_cedula varchar(25), empleado_celular varchar(25), empleado_ciudad_residencia varchar(25), empleado_direccion varchar(25), empleado_sucursal int)
-begin
-	declare n_sucursales int;
-    select count(*) into n_sucursales from sucursales where sucursales.id = empleado_sucursal;
-    if n_sucursales > 0 then
-		insert into empleado(id, nombre1, nombre2, apellido1, apellido2, email, cedula, celular, ciudad_residencia, direccion, id_sucursal) values(empleado_id, empleado_nombre1, empleado_nombre2, empleado_apellido1, empleado_apellido2, empleado_email, empleado_cedula, empleado_celular, empleado_ciudad_residencia, empleado_direccion, empleado_sucursal);
-	else
-		select 'error: la sucursal no existe bro...' as mensaje;
-	end if;
-end//
-delimiter ;
-call registrar_empleado(102, 'Cristiano', 'nose', 'Ronaldo', 'nose', 'elBichoSiuu@gmail.com', '7777777777', '123432177', 'niidea', 'sisas', 100);
-
-## Actualizar empleados ya existentes
-delimiter //
-create procedure actualizar_empleado(empleado_id int, n_empleado_id int, empleado_nombre1 varchar(25), empleado_nombre2 varchar(25), empleado_apellido1 varchar(25), empleado_apellido2 varchar(25), empleado_email varchar(25), empleado_cedula varchar(25), empleado_celular varchar(25), empleado_ciudad_residencia varchar(25), empleado_direccion varchar(25), empleado_sucursal int)
-begin
-	update empleado set id = n_empleado_id, nombre1 = empleado_nombre1, nombre2 = empleado_nombre2, apellido1 = empleado_apellido1, apellido2 = empleado_apellido2, email = empleado_email, cedula = empleado_cedula, celular = empleado_celular, ciudad_residencia = empleado_ciudad_residencia, direccion = empleado_direccion, id_sucursal = empleado_sucursal
-    where id = empleado_id;
-end//
-delimiter ;
-call actualizar_empleado(103, 102, 'Cristiano', null,'Ronaldo', 'siuu', 'elBichoSiuu@gmail.com', '7777777777', '123432177', 'niidea', 'sisas', 99);
-
-## registrar vehiculos
-delimiter //
-create procedure registrar_vehiculo(vehiculo_id int, vehiculo_color varchar(25), vehiculo_motor varchar(25), vehiculo_sunroof varchar(25), vehiculo_capacidad varchar(25), vehiculo_puertas int, vehiculo_modelo varchar(25), vehiculo_referencia varchar(25), vehiculo_placa varchar(25), vehiculo_tipo_vehiculo varchar(25))
-begin
-    declare tipo_vehiculo_e int;
-    select count(*) into tipo_vehiculo_e from vehiculo where tipo_vehiculo = vehiculo_tipo_vehiculo;
-    if tipo_vehiculo_e > 0 then
-        insert into vehiculo(id, color, motor, sunroof, capacidad, puertas, modelo, referencia, placa, tipo_vehiculo)
-        values(vehiculo_id, vehiculo_color, vehiculo_motor, vehiculo_sunroof, vehiculo_capacidad, vehiculo_puertas, vehiculo_modelo, vehiculo_referencia, vehiculo_placa, vehiculo_tipo_vehiculo);
-        select 'Vehículo registrado exitosamente.' as mensaje;
-    else
-        select 'Error: El tipo de vehículo especificado no es válido.' as mensaje;
-    end if;
-end//
-delimiter ;
-call registrar_vehiculo(101, 'Rojo', 'Gasolina', 'No', '5 personas', 4, 'Sedán', '2023', 'ABC123', 'Automóvil');
-
-## Actualizar vehiculos
-delimiter //
-create procedure actualizar_vehiculo( vehiculo_id int, nuevo_vehiculo_id int, vehiculo_color varchar(25), vehiculo_motor varchar(25), vehiculo_sunroof varchar(25), vehiculo_capacidad varchar(25), vehiculo_puertas int, vehiculo_modelo varchar(25), vehiculo_referencia varchar(25), vehiculo_placa varchar(25), vehiculo_tipo_vehiculo varchar(25))
-begin
-    update vehiculo set id = nuevo_vehiculo_id, color = vehiculo_color, motor = vehiculo_motor, sunroof = vehiculo_sunroof, capacidad = vehiculo_capacidad, puertas = vehiculo_puertas, modelo = vehiculo_modelo, referencia = vehiculo_referencia, placa = vehiculo_placa, tipo_vehiculo = vehiculo_tipo_vehiculo
-    where id = vehiculo_id;
-    select 'Vehículo actualizado correctamente.' as mensaje;
-end//
-delimiter ;
-call actualizar_vehiculo(101, 102, 'Rojo', 'Gasolina', 'No', '5 personas', 4, 'Sedán', '2023', 'ABC123', 'Automóvil');
-
-## insertar sucursales
+-- Insertar sucursal
 delimiter //
 create procedure insertar_sucursal(sucursal_id int, sucursal_email varchar(25), sucursal_celular varchar(25), sucursal_telefono varchar(25), sucursal_ciudad varchar(25), sucursal_direccion varchar(25))
 begin
@@ -696,7 +622,7 @@ begin
 end//
 delimiter ;
 
-## actualizar sucursales
+-- Actualizar sucursal
 delimiter //
 create procedure actualizar_sucursal( sucursal_id int, n_sucursal_id int, sucursal_email varchar(25), sucursal_celular varchar(25), sucursal_telefono varchar(25), sucursal_ciudad varchar(25), sucursal_direccion varchar(25))
 begin
@@ -705,60 +631,133 @@ begin
 end//
 delimiter ;
 
-## 	Procedimiento para consultar disponibilidad de vehículos para alquiler por tipo de vehiculo, rango de precios y fechas de disponibilidad
+-- Registrar empleado
+delimiter //
+create procedure registrar_empleado(id_empleado int, sucursal_empleado int, cedula_empleado varchar(20), nombres_empleado varchar(50), apellidos_empleado varchar(50), direccion_empleado varchar(100), ciudad_empleado varchar(50), celular_empleado varchar(15), correo_empleado varchar(50))
+begin
+	declare n_sucursales int;
+    select count(*) into n_sucursales from sucursales where sucursales.id = sucursal_empleado;
+    if n_sucursales > 0 then
+		insert into empleados(id, id_sucursal, cedula, nombres, apellidos, direccion, ciudad, celular, corrreo) values(id_empleado, sucursal_empleado, cedula_empleado, nombres_empleado, apellidos_empleado, direccion_empleado, ciudad_empleado, celular_empleado, correo_empleado);
+	else
+		select 'Error: la sucursal no existe' as mensaje;
+	end if;
+end//
+delimiter ;
+call registrar_empleado(101, 101, '1032345478', 'Sebastian', 'Pérez', 'Calle 34 #10-20', 'Barranquilla', '3001231627', 'sebas.perez@example.com');
+
+-- Actualizar empleado
+delimiter //
+create procedure actualizar_empleado(id_empleado int, n_id_empleado int, sucursal_empleado int, cedula_empleado varchar(20), nombres_empleado varchar(50), apellidos_empleado varchar(50), direccion_empleado varchar(100), ciudad_empleado varchar(50), celular_empleado varchar(15), correo_empleado varchar(50))
+begin
+	update empleados set id = n_id_empleado, id_sucursal = sucursal_empleado, cedula = cedula_empleado, nombres = nombres_empleado, apellidos = apellidos_empleado, direccion = direccion_empleado, ciudad = ciudad_empleado, celular = celular_empleado, correo = correo_empleado
+    where id = id_empleado;
+end//
+delimiter ;
+call actualizar_empleado(103, 102, 102, '1005447781', 'Julian', 'Caicedo', 'Carrera 35 #52-18', 'Cali', '3028746951', 'julianc12@example.com');
+
+-- Registrar cliente 
+delimiter //
+create procedure registrar_cliente(id_cliente int, cedula_cliente varchar(20), nombres_cliente varchar(50), apellidos_cliente varchar(50), direccion_cliente varchar(100), ciudad_cliente varchar(50), celular_cliente varchar(15), correo_cliente varchar(50))
+begin
+	insert into clientes(id, cedula, nombres, apellidos, direccion, ciudad, celular, correo)
+    values (id_cliente, cedula_cliente, nombres_cliente, apellidos_cliente, direccion_cliente, ciudad_cliente, celular_cliente, correo_cliente);
+end//
+
+delimiter ;
+CALL registrar_cliente('101', 123456245, 'Juan Jose', 'Puerta Corredor', 'Calle 22 #23-45', 'Medellín', '3046800567', 'juanjpuerta1@example.com');
+
+-- Actualizar cliente
+delimiter //
+create procedure actualizar_cliente(id_cliente int, n_id_cliente int, cedula_cliente varchar(20), nombres_cliente varchar(50), apellidos_cliente varchar(50), direccion_cliente varchar(100), ciudad_cliente varchar(50), celular_cliente varchar(15), correo_cliente varchar(50))
+begin
+	update clientes set id = n_id_cliente, nombres = nombres_cliente, apellidos = apellidos_cliente, direccion = direccion_cliente, ciudad = ciudad_cliente, celular = celular_cliente, correo = correo_cliente
+    where id = id_cliente;
+end//
+delimiter ;
+call actualizar_cliente('105', '102', 231456245, 'Jeferson Giovanni', 'Arias Peña', 'Calle 13 #25-45', 'Bogotá', '3046800854', 'jeferarias23@example.com');
+
+-- Registrar vehiculos
+delimiter //
+create procedure registrar_vehiculo(id_vehiculo int, tipo_vehiculo varchar(20), placa_vehiculo varchar(10), referencia_vehiculo varchar(50), modelo_vehiculo int, puertas_vehiculo int, capacidad_vehiculo int, sunroof_vehiculo varchar(5), motor_vehiculo varchar(20), color_vehiculo varchar(20))
+begin
+    declare tipo_vehiculo_e int;
+    select count(*) into tipo_vehiculo_e from vehiculos where tipo_vehiculo = tipo_vehiculo;
+    if tipo_vehiculo_e > 0 then
+        insert into vehiculos(id, tipo, placa, referencia, modelo, puertas, capacidad, sunroof, motor, color)
+        values(id_vehiculo, tipo_vehiculo, placa_vehiculo, referencia_vehiculo, modelo_vehiculo, puertas_vehiculo, capacidad_vehiculo, sunroof_vehiculo, motor_vehiculo, color_vehiculo);
+        select 'Vehículo registrado exitosamente.' as mensaje;
+    else
+        select 'Error: El tipo de vehículo solicitado no es válido.' as mensaje;
+    end if;
+end//
+delimiter ;
+call registrar_vehiculo(101, 'Sedán', 'DOF488', 'SUV', '2023', 4, 5, 'si', 'Gasolina', 'Gris');
+
+-- Actualizar vehiculos
+delimiter //
+create procedure actualizar_vehiculo(id_vehiculo int, id_nuevo_vehiculo int, tipo_vehiculo varchar(20), placa_vehiculo varchar(10), referencia_vehiculo varchar(50), modelo_vehiculo int, puertas_vehiculo int, capacidad_vehiculo int, sunroof_vehiculo varchar(5), motor_vehiculo varchar(20), color_vehiculo varchar(20))
+begin
+    update vehiculos set id = id_nuevo_vehiculo, tipo = tipo_vehiculo, placa = placa_vehiculo, referencia = referencia_vehiculo, modelo = modelo_vehiculo, puertas = puertas_vehiculo, capacidad = capacidad_vehiculo, sunroof = sunroof_vehiculo, motor = motor_vehiculo, color = color_vehiculo
+    where id = id_vehiculo;
+    select 'Vehículo actualizado correctamente.' as mensaje;
+end//
+delimiter ;
+call actualizar_vehiculo(103, 102, 'SUV', 'ATG412', 'SUV', '2023', 4, 5, 'no', 'Diesel', 'Blanco');
+
+
+--  Procedimiento para consultar disponibilidad de vehículos para alquiler por tipo de vehiculo, rango de precios y fechas de disponibilidad
 delimiter //
 create procedure consultar_vehiculos(con_tipo_vehiculo varchar(25), con_fecha_inicio date, con_fecha_fin date, con_precio_min_dia int, con_precio_max_dia int, con_precio_min_semana int, con_precio_max_semana int)
 begin
-	select vehiculo.id as VehiculoID, vehiculo.color, vehiculo.motor, vehiculo.sunroof, vehiculo.capacidad, vehiculo.puertas, vehiculo.modelo, vehiculo.referencia, vehiculo.placa, vehiculo.tipo_vehiculo, alquileres.valor_alquiler_semana, alquileres.valor_alquiler_dia
-    from vehiculo
-    left join alquileres on vehiculo.id = alquileres.id_vehiculo
+	select id.vehiculo as vehiculoID, vehiculo.color, vehiculo.motor, vehiculo.sunroof, vehiculo.capacidad, vehiculo.puertas, vehiculo.modelo, vehiculo.referencia, vehiculo.placa, vehiculo.tipo_vehiculo, alquileres.valor_alquiler_semana, alquileres.valor_alquiler_dia
+    from vehiculos
+    left join alquileres on id.vehiculo = alquileres.id_vehiculo
     where vehiculo.tipo_vehiculo = con_tipo_vehiculo and (alquileres.id is null or (alquileres.fecha_salida > con_fecha_fin or alquileres.fecha_llegada < con_fecha_inicio)) and ((ifnull(alquileres.valor_alquiler_dia, 0) between con_precio_min_dia and con_precio_max_dia) or (ifnull(alquileres.valor_alquiler_semana, 0) between con_precio_min_semana and con_precio_max_semana))
-    order by vehiculo.id;
+    order by id.vehiculo;
 end//
 delimiter ;
 call consultar_vehiculos('Automóvil', '2024-10-01', '2024-10-10', 0, 0, 500000, 550000);
 
-## Hacer alquiler de vehiculos
+-- Alquileres
 delimiter //
-create procedure registrar_alquiler(alquiler_id int, fecha_salida date, fecha_llegada date, fecha_esperada_llegada date, valor_alquiler_semana int, valor_alquiler_dia int, porcentaje_descuento decimal(5,2), valor_cotizado int, valor_pagado int, vehiculo_id int, empleado_id int, cliente_id int, sucursal_salida_id int, sucursal_llegada_id int)
+create procedure registrar_alquiler(id_alquiler int, id_vehiculo int, id_cliente int, id_empleado int, id_sucursal int, fecha_salida date, fecha_llegada date, fecha_esperada date, valor_alquiler_semana decimal(10,2), valor_alquiler_dia decimal(10,2), porcentaje_descuento decimal(5,2), valor_cotizado decimal(10,2), valor_pagado decimal(10,2))
 begin
     declare existencia_vehiculo int;
     declare existencia_empleado int;
     declare existencia_cliente int;
-    declare existencia_sucursal_salida int;
-    declare existencia_sucursal_llegada int;
-	select count(*) into existencia_vehiculo from vehiculo where id = vehiculo_id;
-    select count(*) into existencia_empleado from empleado where id = empleado_id;
-    select count(*) into existencia_cliente from cliente where id = cliente_id;
-    select count(*) into existencia_sucursal_salida from sucursales where id = sucursal_salida_id;
-    select count(*) into existencia_sucursal_llegada from sucursales where id = sucursal_llegada_id;
-    if existencia_vehiculo > 0 and existencia_empleado > 0 and existencia_cliente > 0 and existencia_sucursal_salida > 0 and existencia_sucursal_llegada > 0 then
-        insert into alquileres(id, fecha_salida, fecha_llegada, fecha_esperada_llegada, valor_alquiler_semana, valor_alquiler_dia, porcentaje_descuento, valor_cotizado, valor_pagado, id_vehiculo, id_empleado, id_cliente, id_sucursal_salida, id_sucursal_llegada)
-        values(alquiler_id, fecha_salida, fecha_llegada, fecha_esperada_llegada, valor_alquiler_semana, valor_alquiler_dia, porcentaje_descuento, valor_cotizado, valor_pagado, vehiculo_id, empleado_id, cliente_id, sucursal_salida_id, sucursal_llegada_id);
+    declare existencia_sucursal int;
+	select count(*) into existencia_vehiculo from vehiculos where id = id_vehiculo;
+    select count(*) into existencia_empleado from empleados where id = id_empleado;
+    select count(*) into existencia_cliente from clientes where id = id_cliente;
+    select count(*) into existencia_sucursal from sucursales where id = id_sucursal;
+    if existencia_vehiculo > 0 and existencia_empleado > 0 and existencia_cliente > 0 and existencia_sucursal > 0 then
+        insert into alquileres(id, id_vehiculo, id_cliente, id_empleado, id_sucursal, fecha_salida, fecha_llegada, fecha_esperada, valor_alquiler_semana, valor_alquiler_dia, porcentaje_descuento, valor_cotizado, valor_pagado)
+        values(id_alquiler, id_vehiculo, id_cliente, id_empleado, id_sucursal, fecha_salida, fecha_llegada, fecha_esperada_llegada, valor_alquiler_semana, valor_alquiler_dia, porcentaje_descuento, valor_cotizado, valor_pagado);
     else
-        select 'Error: Verifique la existencia de los elementos requeridos (vehículo, empleado, cliente, sucursal de salida y llegada).' as mensaje;
+        select 'Error: Verifique la existencia de los elementos requeridos (vehículo, empleado, cliente, sucursal).' as mensaje;
     end if;
 end//
 delimiter ;
 
-## Historial de alquileres por cliente
+-- Historial alquileres
 delimiter //
-create function historial_alquileres(cliente_id INT) 
+create function historial_alquileres(id_cliente int) 
 returns text deterministic
 begin
     declare resultado TEXT;
 	select
         group_concat(
-            concat('alquiler id: ', alq.id,
+            concat('id alquiler: ', alq.id,
                    ', fecha salida: ', alq.fecha_salida,
                    ', fecha llegada: ', alq.fecha_llegada,
                    ', vehículo: ', veh.placa,
-                   ', empleado: ', emp.nombre1,
+                   ', empleado: ', emp.nombres,
                    ', valor cotizado: ', alq.valor_cotizado
             ) separator '\n') into resultado
     from alquileres alq
-    join vehiculo veh on alq.id_vehiculo = veh.id
-    join empleado emp on alq.id_empleado = emp.id
+    join vehiculos veh on alq.id_vehiculo = veh.id
+    join empleados emp on alq.id_empleado = emp.id
     where alq.id_cliente = cliente_id;
     if resultado is null then
         set resultado = 'no se encontraron alquileres para este cliente.';
@@ -775,19 +774,25 @@ select historial_alquileres(1) as Historial;
 
 -- ### PERMISOS ### --
 
--- Creación de usuario empleado 
+-- Creación de usuarios
 create user 'empleado'@'%' identified by 'empleado_publico';
 create user 'cliente'@'%' identified by 'cliente_publico';
 
 -- Asignar permisos a empleados para que accedan a la tabla sucursales, vehiculos, empleados y base de datos
-grant select on mysql2_dia4.sucursales to 'empleado'@'%';
-grant select on mysql2_dia4.vehiculos to 'empleado'@'%';
-grant select on mysql2_dia4.empleados to 'empleado'@'%';
+grant execute on procedure mysql2_dia4.insertar_sucursal to 'empleado'@'%';
+grant execute on procedure mysql2_dia4.actualizar_sucursal to 'empleado'@'%';
+grant execute on procedure mysql2_dia4.registrar_empleado to 'empleado'@'%';
+grant execute on procedure mysql2_dia4.actualizar_empleado to 'empleado'@'%';
+grant execute on procedure mysql2_dia4.registrar_vehiculo to 'empleado'@'%';
+grant execute on procedure mysql2_dia4.actualizar_vehiculo to 'empleado'@'%';
 
--- Añadir permisos para hacer CRUD
-grant update, insert, delete on mysql2_dia4.sucursales to 'empleado'@'%';
-grant update, insert, delete on mysql2_dia4.vehiculos to 'empleado'@'%';
-grant update, insert, delete on mysql2_dia4.empleados to 'empleado'@'%';
+
+-- Asignar permisos a clientes para que accedan a la tabla sucursales, vehiculos, empleados y base de datos
+grant execute on procedure mysql2_dia4.registrar_cliente to 'cliente'@'%';
+grant execute on procedure mysql2_dia4.actualizar_cliente to 'cliente'@'%';
+grant execute on procedure mysql2_dia4.consultar_vehiculos to 'cliente'@'%';
+grant execute on procedure mysql2_dia4.registrar_alquiler to 'cliente'@'%';
+grant execute on procedure mysql2_dia4.historial_alquileres to 'cliente'@'%';
 
 -- Revisar permisos de x usuario
 show grants for 'empleado'@'%';
